@@ -55,3 +55,12 @@ resource "aws_eks_cluster" "eks_cluster" {
   tags = var.user_defined_tags
 
 }
+
+# Deply Amazon EKS Add-ons to Cluster
+module "eks_add_on" {
+  source = "../add-ons"
+
+  cluster_name = var.name
+
+  depends_on = [aws_eks_cluster.eks_cluster]
+}

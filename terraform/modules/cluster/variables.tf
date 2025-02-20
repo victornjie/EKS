@@ -6,7 +6,7 @@
 ######################################################################
 
 variable "name" {
-  description = "The name of the Rancher Management EKS cluster"
+  description = "The name of the EKS cluster"
   type = string
   default = "rancher_management_cluster"
 }
