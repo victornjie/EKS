@@ -48,7 +48,7 @@ resource "aws_launch_template" "ec2_launch_template" {
     
   }
 
-  user_data = filebase64("${path.module}/example.sh")
+  #user_data = filebase64("${path.module}/example.sh")
 
   tags = var.user_defined_tags
 }

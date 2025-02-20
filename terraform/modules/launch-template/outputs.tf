@@ -10,6 +10,11 @@ output "ec2_launch_template_id" {
   value       = aws_launch_template.ec2_launch_template.id
 }
 
+output "ec2_launch_template_name" {
+  description = "The name of the launch template"
+  value       = aws_launch_template.ec2_launch_template.name
+}
+
 output "ec2_launch_template_arn" {
   description = "Amazon Resource Name (ARN) of the launch template"
   value       = aws_launch_template.ec2_launch_template.arn

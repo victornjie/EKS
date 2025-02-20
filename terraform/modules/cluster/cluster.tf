@@ -56,7 +56,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
 }
 
-# Deply Amazon EKS Add-ons to Cluster
+# Deploy Amazon EKS Add-ons to Cluster
 module "eks_add_on" {
   source = "../add-ons"
 

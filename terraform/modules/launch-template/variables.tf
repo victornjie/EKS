@@ -29,7 +29,7 @@ variable "volume_type" {
 
   validation {
     condition     = contains(["gp3", "gp2", "standard"], var.volume_type)
-    error_message = "Allowed values are 'gp3', 'gp2', 'standard'"
+    error_message = "Allowed values are 'gp3', 'gp2', or 'standard'"
   }
 }
 
