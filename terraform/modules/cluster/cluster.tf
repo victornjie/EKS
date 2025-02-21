@@ -55,7 +55,6 @@ resource "aws_eks_cluster" "eks_cluster" {
   tags = var.user_defined_tags
 
   depends_on = [module.cluster_iam_role]
-
 }
 
 # Create Amazon EKS Cluster IAM Role
@@ -65,8 +64,6 @@ module "cluster_iam_role" {
   iam_role_name = "eks_cluster_role"
   principal = "eks.amazonaws.com"
   iam_role_policy_arn = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"]
-
-  
 }
 
 # Deploy Amazon EKS Add-ons to Cluster

@@ -40,6 +40,20 @@ resource "aws_eks_node_group" "node_group" {
 }
 
 
+# Create Amazon EKS Node IAM Role
+module "node_iam_role" {
+  source = "../iam-role"
+
+  iam_role_name = "eks_node_role"
+  principal = "ec2.amazonaws.com"
+  iam_role_policy_arn = [
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy", "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy", "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy", "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
+    ]
+}
+
+
 # Create EC2 Launch Template for Node Group
 module "node_launch_template" {
   source = "../launch-template"
@@ -54,4 +68,5 @@ module "node_launch_template" {
   resource_type_tag = var.resource_type_tag
   user_defined_tags = var.user_defined_tags
 
+  depends_on = [module.node_iam_role]
 }
