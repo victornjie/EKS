@@ -120,3 +120,14 @@ variable "user_defined_tags" {
     error_message = "Must match the allowable values for a Tag Key/Value. The Key must NOT begin with 'aws:'. Both can only contain alphanumeric characters or specific special characters _.:/=+-@ up to 128 characters for Key and 256 characters for Value."
   }
 }
+
+#KMS key module variables
+variable "aws_admin_role_arn" {
+  description = "The ARN of the AWS Administrator role"
+  type = string
+}
+
+variable "kms_key_name" {
+  description = "The name of the KMS key"
+  type = string
+}

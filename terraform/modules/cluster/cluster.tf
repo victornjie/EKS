@@ -19,7 +19,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
   encryption_config {
     provider {
-      key_arn = var.key_arn
+      key_arn = module.eks_kms_key.kms_key_arn
     }
     resources = ["secrets"]
   }
@@ -64,6 +64,8 @@ module "cluster_iam_role" {
   iam_role_name = "eks_cluster_role"
   principal = "eks.amazonaws.com"
   iam_role_policy_arn = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"]
+
+  depends_on = [module.eks_kms_key]
 }
 
 # Deploy Amazon EKS Add-ons to Cluster
@@ -73,4 +75,12 @@ module "eks_add_on" {
   cluster_name = var.name
 
   depends_on = [aws_eks_cluster.eks_cluster]
+}
+
+# KMS key to use for encrypting EKS Cluster secrets
+module "eks_kms_key" {
+  source = "../kms-key"
+
+  aws_admin_role_arn = var.aws_admin_role_arn
+  kms_key_name       = var.kms_key_name
 }
