@@ -32,7 +32,7 @@ module "cluster_iam_role" {
 
 resource "aws_eks_cluster" "eks_cluster" {
   name     = var.cluster_name
-  version  = var.version
+  version  = var.cluster_version
   role_arn = module.cluster_iam_role.iam_role_arn
 
   access_config {

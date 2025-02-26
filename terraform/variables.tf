@@ -9,10 +9,9 @@
 variable "cluster_name" {
   description = "The name of the EKS cluster"
   type = string
-  default = "rancher_management_cluster"
 }
 
-variable "version" {
+variable "cluster_version" {
   description = "Desired Kubernetes master version"
   type = string
   default = "1.32"
@@ -24,7 +23,7 @@ variable "authentication_mode" {
   default = "API_AND_CONFIG_MAP"
 
   validation {
-    condition     = contains(["API_AND_CONFIG_MAP", "API", "CONFIG_MAP"], var.cluster_auth_mode)
+    condition     = contains(["API_AND_CONFIG_MAP", "API", "CONFIG_MAP"], var.authentication_mode)
     error_message = "Allowed values are 'API_AND_CONFIG_MAP', 'API', or 'CONFIG_MAP'"
   }
 }
@@ -82,7 +81,7 @@ variable "support_type" {
   default = "STANDARD"
 
   validation {
-    condition     = contains(["STANDARD", "EXTENDED"], var.cluster_support_type)
+    condition     = contains(["STANDARD", "EXTENDED"], var.support_type)
     error_message = "Allowed values are 'STANDARD' or 'EXTENDED'"
   }
 }
@@ -93,7 +92,7 @@ variable "enabled_cluster_log_types" {
   default = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   validation {
-    condition     = contains(["api", "audit", "authenticator", "controllerManager", "scheduler"], var.cluster_logging)
+    condition     = contains(["api", "audit", "authenticator", "controllerManager", "scheduler"], var.enabled_cluster_log_types)
     error_message = "Allowed values are 'api', 'audit', 'authenticator', 'controllerManager', 'scheduler'"
   }
 }
@@ -141,7 +140,7 @@ variable "access_entry_type" {
   default = "STANDARD"
 
   validation {
-    condition     = contains(["STANDARD", "EC2_LINUX", "EC2_WINDOWS", "FARGATE_LINUX"], var.cluster_access_type)
+    condition     = contains(["STANDARD", "EC2_LINUX", "EC2_WINDOWS", "FARGATE_LINUX"], var.access_entry_type)
     error_message = "Allowed values are 'STANDARD', 'EC2_LINUX', 'EC2_WINDOWS', or 'FARGATE_LINUX'"
   }
 }
@@ -158,7 +157,7 @@ variable "access_scope_type" {
   default = "cluster"
 
   validation {
-    condition     = contains(["cluster", "namespace"], var.cluster_access_scope)
+    condition     = contains(["cluster", "namespace"], var.access_scope_type)
     error_message = "Allowed values are 'cluster' or 'namespace'"
   }
 }
