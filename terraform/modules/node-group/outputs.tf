@@ -14,3 +14,13 @@ output "node_group_arn" {
   description = "The ARN of the EKS Node Group"
   value       = aws_eks_node_group.node_group.arn
 }
+
+output "node_kms_key_arn" {
+  description = "The ARN of the KMS key"
+  value = aws_kms_key.node_kms_key.arn
+}
+
+output "node_kms_key_id" {
+  description = "The ID of the KMS key"
+  value = aws_kms_key.node_kms_key.key_id
+}
