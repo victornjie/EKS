@@ -19,7 +19,7 @@ variable "device_name" {
 variable "volume_size" {
   description = "The size of the EBS volume in gigabytes"
   type = number
-  default = 64
+  default = 32
 }
 
 variable "volume_type" {
@@ -34,19 +34,20 @@ variable "volume_type" {
 }
 
 variable "kms_key_id" {
-  description = "(Optional) The ARN of the AWS KMS service customer master key (CMK) to use when creating the encrypted volume"
+  description = "The ARN of the AWS KMS service customer master key (CMK) to use when creating the encrypted volume"
   type = string
-  default = null
 }
 
 variable "instance_type" {
   description = "The EC2 instance type"
   type = string
+  default = "t3.medium"
 }
 
 variable "security_groups" {
   description = "A list of security group IDs to associate"
   type = list(string)
+  default = null
 }
 
 variable "resource_type_tag" {

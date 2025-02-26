@@ -20,12 +20,12 @@ output "eks_cluster_version" {
   value       = aws_eks_cluster.eks_cluster.platform_version
 }
 
-output "kms_key_arn" {
+output "cluster_kms_key_arn" {
   description = "The ARN of the KMS key"
-  value = aws_kms_key.kms_key.arn
+  value = aws_kms_key.cluster_kms_key.arn
 }
 
-output "kms_key_id" {
+output "cluster_kms_key_id" {
   description = "The ID of the KMS key"
-  value = aws_kms_key.kms_key.key_id
+  value = aws_kms_key.cluster_kms_key.key_id
 }

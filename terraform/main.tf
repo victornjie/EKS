@@ -8,16 +8,28 @@
 module "eks_cluster" {
   source = "./modules/cluster"
 
-  notifier_iam_role_name          = local.notifier_iam_role_name
-  aws_org_id                      = local.aws_org_id
-  s3_bucket_name                  = local.s3_bucket_name
-  s3_bucket_prefix                = local.s3_bucket_prefix
-  admin_email_address             = local.admin_email_address
-  notifier_lambda_function_name   = local.notifier_lambda_function_name
-  smtp_user_param_name            = local.smtp_user_param_name
-  smtp_password_param_name        = local.smtp_password_param_name
+  cluster_name               = var.cluster_name
+  cluster_subnet_ids         = var.cluster_subnet_ids
+  user_defined_tags          = var.user_defined_tags
+  cluster_key_admin_role_arn = var.cluster_key_admin_role_arn
+  cluster_kms_key_name       = var.cluster_kms_key_name
+  principal_arn              = var.principal_arn
+}
 
-  providers = {
-    aws = aws
-  }
+
+module "eks_node_group" {
+  source = "./modules/node-group"
+
+  cluster_name            = module.eks_cluster.eks_cluster_name
+  node_group_name         = var.node_group_name
+  node_subnet_ids         = var.node_subnet_ids
+  desired_size            = var.desired_size
+  max_size                = var.max_size
+  min_size                = var.min_size
+  user_defined_tags       = var.user_defined_tags
+  instance_type           = var.instance_type
+  node_key_admin_role_arn = var.node_key_admin_role_arn
+  node_kms_key_name       = var.node_kms_key_name
+
+  depends_on = [module.eks_cluster]
 }

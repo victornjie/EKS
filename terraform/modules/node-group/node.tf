@@ -5,13 +5,23 @@
 # Version: 1.0.1
 ######################################################################
 
+# Creates a Customer Managed (CMK) KMS key to use for encrypting EBS volumes
+resource "aws_kms_key" "node_kms_key" {
+  enable_key_rotation     = true
+  policy                  = data.aws_iam_policy_document.kms_key_policy.json
+  rotation_period_in_days = 180
+  tags = {
+    "Name" = var.node_kms_key_name
+  }
+}
+
 # This module deploys an EKS Managed Node Group
 
 resource "aws_eks_node_group" "node_group" {
   cluster_name    = var.cluster_name
   node_group_name = var.node_group_name
-  node_role_arn   = var.node_role_arn
-  subnet_ids      = var.subnet_ids
+  node_role_arn   = module.node_iam_role.iam_role_arn
+  subnet_ids      = var.node_subnet_ids
   ami_type        = var.ami_type
   capacity_type   = var.capacity_type
   release_version = var.release_version
@@ -51,6 +61,8 @@ module "node_iam_role" {
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy", "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
     "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy", "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
     ]
+  
+  depends_on = [aws_kms_key.node_kms_key]
 }
 
 
@@ -62,9 +74,9 @@ module "node_launch_template" {
   device_name       = var.device_name
   volume_size       = var.volume_size
   volume_type       = var.volume_type
-  kms_key_id        = var.kms_key_id
+  kms_key_id        = aws_kms_key.node_kms_key.arn
   instance_type     = var.instance_type
-  security_groups   = var.security_groups
+  security_groups   = var.node_security_groups
   resource_type_tag = var.resource_type_tag
   user_defined_tags = var.user_defined_tags
 

@@ -6,12 +6,12 @@
 ######################################################################
 
 # Creates a Customer Managed (CMK) KMS key to use for encrypting EKS Cluster secrets
-resource "aws_kms_key" "kms_key" {
+resource "aws_kms_key" "cluster_kms_key" {
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.kms_key_policy.json
   rotation_period_in_days = 180
   tags = {
-    "Name" = var.kms_key_name
+    "Name" = var.cluster_kms_key_name
   }
 }
 
@@ -24,7 +24,7 @@ module "cluster_iam_role" {
   principal = "eks.amazonaws.com"
   iam_role_policy_arn = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"]
 
-  depends_on = [aws_kms_key.kms_key]
+  depends_on = [aws_kms_key.cluster_kms_key]
 }
 
 
@@ -42,7 +42,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
   encryption_config {
     provider {
-      key_arn = aws_kms_key.kms_key.arn
+      key_arn = aws_kms_key.cluster_kms_key.arn
     }
     resources = ["secrets"]
   }
@@ -63,8 +63,8 @@ resource "aws_eks_cluster" "eks_cluster" {
   }
 
   vpc_config {
-    security_group_ids      = var.security_group_ids
-    subnet_ids              = var.subnet_ids
+    security_group_ids      = var.cluster_security_group_ids
+    subnet_ids              = var.cluster_subnet_ids
     endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = var.endpoint_public_access
   }
