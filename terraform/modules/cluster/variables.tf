@@ -5,7 +5,8 @@
 # Version: 1.0.1
 ######################################################################
 
-variable "name" {
+# EKS cluster variables
+variable "cluster_name" {
   description = "The name of the EKS cluster"
   type = string
   default = "rancher_management_cluster"
@@ -15,12 +16,6 @@ variable "version" {
   description = "Desired Kubernetes master version"
   type = string
   default = "1.32"
-}
-
-variable "role_arn" {
-  description = "ARN of the IAM role that provides permissions for the EKS control plane to make calls to AWS API operations on your behalf"
-  type = string
-  default = "10.100.100.0/24"
 }
 
 variable "authentication_mode" {
@@ -38,12 +33,6 @@ variable "bootstrap_cluster_creator_admin_permissions" {
   description = "Specifies whether or not the cluster creator IAM principal was set as a cluster admin access entry during cluster creation time"
   type = bool
   default = true
-}
-
-variable "key_arn" {
-  description = "ARN of the Key Management Service (KMS) customer master key (CMK). The CMK must be symmetric"
-  type = string
-  default = "arn:aws:kms:us-east-1:288761757752:key/25c0a172-ed8b-4ef1-8d5e-98df0d9a9863"
 }
 
 variable "ip_family" {
@@ -121,7 +110,7 @@ variable "user_defined_tags" {
   }
 }
 
-#KMS key module variables
+# KMS key module variables
 variable "aws_admin_role_arn" {
   description = "The ARN of the AWS Administrator role"
   type = string
@@ -130,4 +119,65 @@ variable "aws_admin_role_arn" {
 variable "kms_key_name" {
   description = "The name of the KMS key"
   type = string
+  default = "eks-kms-key"
+}
+
+# EKS cluster access variables
+
+variable "principal_arn" {
+  description = "The IAM Principal ARN which requires Authentication access to the EKS cluster"
+  type = string
+}
+
+variable "kubernetes_groups" {
+  description = "Optionally specify the Kubernetes groups the user would belong to when creating an access entry"
+  type = list(string)
+  default = null
+}
+
+variable "access_entry_type" {
+  description = "The desired authentication mode for the cluster"
+  type = string
+  default = "STANDARD"
+
+  validation {
+    condition     = contains(["STANDARD", "EC2_LINUX", "EC2_WINDOWS", "FARGATE_LINUX"], var.cluster_access_type)
+    error_message = "Allowed values are 'STANDARD', 'EC2_LINUX', 'EC2_WINDOWS', or 'FARGATE_LINUX'"
+  }
+}
+
+variable "policy_arn" {
+  description = "The ARN of the access policy that you're associating"
+  type = string
+  default = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+}
+
+variable "access_scope_type" {
+  description = "The scope of an AccessPolicy that's associated to an AccessEntry"
+  type = string
+  default = "cluster"
+
+  validation {
+    condition     = contains(["cluster", "namespace"], var.cluster_access_scope)
+    error_message = "Allowed values are 'cluster' or 'namespace'"
+  }
+}
+
+variable "namespaces" {
+  description = "The namespaces to which the access scope applies when type is namespace"
+  type = list(string)
+  default = null
+}
+
+# EKS cluster add-ons variables
+variable "addon_name" {
+  description = "Name of the EKS add-on"
+  type = set(string)
+  default = ["vpc-cni", "coredns", "kube-proxy", "aws-ebs-csi-driver", "aws-efs-csi-driver", "eks-pod-identity-agent"]
+}
+
+variable "addon_version" {
+  description = "The version of the EKS add-on"
+  type = string
+  default = null
 }
