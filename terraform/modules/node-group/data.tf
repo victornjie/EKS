@@ -11,8 +11,6 @@ data "aws_caller_identity" "current" {} // Get access to the effective Account I
 
 data "aws_region" "current" {} // Get access to the effective Region where this module is deployed
 
-data "aws_caller_identity" "current" {}
-
 data "aws_iam_policy_document" "kms_key_policy" {
   #checkov:skip=CKV_AWS_109:finding is not valid and should be suppressed. IAM policy below is a Key policy that is attached directly to key. The only resource affected is the key it is attached to.
   #checkov:skip=CKV_AWS_111: finding is not valid and should be suppressed. IAM policy below is a Key policy that is attached directly to key. The only resource affected is the key it is attached to.

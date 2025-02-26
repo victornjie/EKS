@@ -187,10 +187,6 @@ variable "addon_version" {
 ######################################################################
 
 #EKS Managed Node Group module variables
-variable "cluster_name" {
-  description = "The name of the EKS cluster"
-  type = string
-}
 
 variable "node_group_name" {
   description = "Name of the EKS Node Group"
@@ -250,18 +246,6 @@ variable "force_update_version" {
   description = "(Optional) Force version update if existing pods are unable to be drained due to a pod disruption budget issue"
   type = bool
   default = null
-}
-
-variable "user_defined_tags" {
-  type = map(string)
-  validation {
-    condition = alltrue([
-      for k, v in var.user_defined_tags :
-      substr(k, 0, 4) != "aws:"
-      && can(regex("^[\\w\\s_.:=+-@/]{0,128}$", k))
-    && can(regex("^[\\w\\s_.:=+-@/]{0,256}$", v))])
-    error_message = "Must match the allowable values for a Tag Key/Value. The Key must NOT begin with 'aws:'. Both can only contain alphanumeric characters or specific special characters _.:/=+-@ up to 128 characters for Key and 256 characters for Value."
-  }
 }
 
 #EC2 Launch Template module variables
