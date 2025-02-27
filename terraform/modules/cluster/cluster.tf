@@ -20,8 +20,8 @@ resource "aws_kms_key" "cluster_kms_key" {
 module "cluster_iam_role" {
   source = "../iam-role"
 
-  iam_role_name = "eks_cluster_role"
-  principal = "eks.amazonaws.com"
+  iam_role_name       = "eks_cluster_role"
+  principal           = "eks.amazonaws.com"
   iam_role_policy_arn = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"]
 
   depends_on = [aws_kms_key.cluster_kms_key]
@@ -47,23 +47,20 @@ resource "aws_eks_cluster" "eks_cluster" {
     resources = ["secrets"]
   }
 
-  dynamic "kubernetes_network_config" {
-    for_each = var.ip_family == "ipv4" ? [1]:[0]
-    content {
-      ip_family         = var.ip_family
-      service_ipv4_cidr = var.service_ipv4_cidr
-    }
+  kubernetes_network_config {
+    ip_family         = var.ip_family
+    service_ipv4_cidr = var.service_ipv4_cidr
   }
 
-  dynamic "kubernetes_network_config" {
+  /*dynamic "kubernetes_network_config" {
     for_each = var.ip_family == "ipv6" ? [1]:[0]
     content {
       ip_family         = var.ip_family
     }
-  }
+  }*/
 
   vpc_config {
-    security_group_ids      = var.cluster_security_group_ids
+    security_group_ids      = var.eks_security_group_ids
     subnet_ids              = var.cluster_subnet_ids
     endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = var.endpoint_public_access
@@ -95,21 +92,17 @@ resource "aws_eks_access_policy_association" "cluster_access_policy" {
   policy_arn    = var.policy_arn
   principal_arn = var.principal_arn
 
-  dynamic "access_scope" {
+  /*dynamic "access_scope" {
     for_each = var.access_scope_type == "namespace" ? [1]:[0]
     content {
       type       = var.access_scope_type
       namespaces = var.namespaces
     }
     
-  }
+  }*/
 
-  dynamic "access_scope" {
-    for_each = var.access_scope_type == "cluster" ? [1]:[0]
-    content {
-      type       = var.access_scope_type
-    }
-    
+  access_scope {
+    type = var.access_scope_type
   }
 
   depends_on = [aws_eks_cluster.eks_cluster]
@@ -117,11 +110,31 @@ resource "aws_eks_access_policy_association" "cluster_access_policy" {
 
 
 # Deploy Amazon EKS Add-ons to EKS Cluster
-resource "aws_eks_addon" "eks_add_on" {
-  for_each      = var.addon_name
-  cluster_name  = aws_eks_cluster.eks_cluster.name
-  addon_name    = each.value
-  addon_version = var.addon_version
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  addon_name   = "vpc-cni"
+
+  configuration_values = jsonencode({
+    env = {
+      AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG = "true"
+      ENABLE_POD_ENI                     = "true"
+      POD_SECURITY_GROUP_ENFORCING_MODE  = "standard"
+      ENI_CONFIG_LABEL_DEF               = "topology.kubernetes.io/zone"
+      ENABLE_PREFIX_DELEGATION           = "true"
+    }
+    init = {
+      env = {
+        DISABLE_TCP_EARLY_DEMUX = "true"
+      }
+    }
+  })
+
+  depends_on = [aws_eks_cluster.eks_cluster]
+}
+
+resource "aws_eks_addon" "kube_proxy" {
+  cluster_name = aws_eks_cluster.eks_cluster.name
+  addon_name   = "kube-proxy"
 
   depends_on = [aws_eks_cluster.eks_cluster]
 }

@@ -42,7 +42,7 @@ resource "aws_launch_template" "ec2_launch_template" {
   dynamic "tag_specifications" {
     for_each = var.resource_type_tag
     content {
-      resource_type = each.value
+      resource_type = tag_specifications.value
       tags = var.user_defined_tags
     }
     

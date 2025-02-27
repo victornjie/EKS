@@ -51,7 +51,7 @@ variable "service_ipv4_cidr" {
   default = "10.100.100.0/24"
 }
 
-variable "cluster_security_group_ids" {
+variable "eks_security_group_ids" {
   description = "Optional list of security group IDs for communication between worker nodes and the Kubernetes control plane"
   type = list(string)
   default = []
@@ -91,10 +91,10 @@ variable "enabled_cluster_log_types" {
   type = list(string)
   default = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-  validation {
+  /*validation {
     condition     = contains(["api", "audit", "authenticator", "controllerManager", "scheduler"], var.enabled_cluster_log_types)
     error_message = "Allowed values are 'api', 'audit', 'authenticator', 'controllerManager', 'scheduler'"
-  }
+  }*/
 }
 
 variable "user_defined_tags" {
@@ -165,18 +165,5 @@ variable "access_scope_type" {
 variable "namespaces" {
   description = "The namespaces to which the access scope applies when type is namespace"
   type = list(string)
-  default = null
-}
-
-# EKS cluster add-ons variables
-variable "addon_name" {
-  description = "Name of the EKS add-on"
-  type = set(string)
-  default = ["vpc-cni", "coredns", "kube-proxy", "aws-ebs-csi-driver", "aws-efs-csi-driver", "eks-pod-identity-agent"]
-}
-
-variable "addon_version" {
-  description = "The version of the EKS add-on"
-  type = string
   default = null
 }

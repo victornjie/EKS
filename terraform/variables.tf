@@ -8,19 +8,19 @@
 # EKS Cluster module variables
 variable "cluster_name" {
   description = "The name of the EKS cluster"
-  type = string
+  type        = string
 }
 
 variable "cluster_version" {
   description = "Desired Kubernetes master version"
-  type = string
-  default = "1.32"
+  type        = string
+  default     = "1.32"
 }
 
 variable "authentication_mode" {
   description = "The desired authentication mode for the cluster"
-  type = string
-  default = "API_AND_CONFIG_MAP"
+  type        = string
+  default     = "API_AND_CONFIG_MAP"
 
   validation {
     condition     = contains(["API_AND_CONFIG_MAP", "API", "CONFIG_MAP"], var.authentication_mode)
@@ -30,14 +30,14 @@ variable "authentication_mode" {
 
 variable "bootstrap_cluster_creator_admin_permissions" {
   description = "Specifies whether or not the cluster creator IAM principal was set as a cluster admin access entry during cluster creation time"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "ip_family" {
   description = "The IP family used to assign Kubernetes pod and service addresses"
-  type = string
-  default = "ipv4"
+  type        = string
+  default     = "ipv4"
 
   validation {
     condition     = contains(["ipv4", "ipv6"], var.ip_family)
@@ -47,38 +47,38 @@ variable "ip_family" {
 
 variable "service_ipv4_cidr" {
   description = "The CIDR block to assign Kubernetes pod and service IP addresses from"
-  type = string
-  default = "10.100.100.0/24"
+  type        = string
+  default     = "10.100.100.0/24"
 }
 
-variable "cluster_security_group_ids" {
+variable "eks_security_group_ids" {
   description = "Optional list of security group IDs for communication between worker nodes and the Kubernetes control plane"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "cluster_subnet_ids" {
   description = "List of subnet IDs. Must be in at least two different availability zones"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "endpoint_private_access" {
   description = "Specify whether the Amazon EKS private API server endpoint is enabled"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "endpoint_public_access" {
   description = "Specify whether the Amazon EKS public API server endpoint is enabled"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "support_type" {
   description = "Specify whether extended support is enabled or disabled for the cluster"
-  type = string
-  default = "STANDARD"
+  type        = string
+  default     = "STANDARD"
 
   validation {
     condition     = contains(["STANDARD", "EXTENDED"], var.support_type)
@@ -88,13 +88,13 @@ variable "support_type" {
 
 variable "enabled_cluster_log_types" {
   description = "List of the desired control plane logging to enable for the cluster"
-  type = list(string)
-  default = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  type        = list(string)
+  default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-  validation {
+  /*validation {
     condition     = contains(["api", "audit", "authenticator", "controllerManager", "scheduler"], var.enabled_cluster_log_types)
     error_message = "Allowed values are 'api', 'audit', 'authenticator', 'controllerManager', 'scheduler'"
-  }
+  }*/
 }
 
 variable "user_defined_tags" {
@@ -112,32 +112,32 @@ variable "user_defined_tags" {
 # EKS cluster KMS key module variables
 variable "cluster_key_admin_role_arn" {
   description = "The ARN of the AWS Administrator role"
-  type = string
+  type        = string
 }
 
 variable "cluster_kms_key_name" {
   description = "The name of the KMS key"
-  type = string
-  default = "eks-kms-key"
+  type        = string
+  default     = "eks-kms-key"
 }
 
 # EKS cluster access variables
 
 variable "principal_arn" {
   description = "The IAM Principal ARN which requires Authentication access to the EKS cluster"
-  type = string
+  type        = string
 }
 
 variable "kubernetes_groups" {
   description = "Optionally specify the Kubernetes groups the user would belong to when creating an access entry"
-  type = list(string)
-  default = null
+  type        = list(string)
+  default     = null
 }
 
 variable "access_entry_type" {
   description = "The desired authentication mode for the cluster"
-  type = string
-  default = "STANDARD"
+  type        = string
+  default     = "STANDARD"
 
   validation {
     condition     = contains(["STANDARD", "EC2_LINUX", "EC2_WINDOWS", "FARGATE_LINUX"], var.access_entry_type)
@@ -147,14 +147,14 @@ variable "access_entry_type" {
 
 variable "policy_arn" {
   description = "The ARN of the access policy that you're associating"
-  type = string
-  default = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  type        = string
+  default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 }
 
 variable "access_scope_type" {
   description = "The scope of an AccessPolicy that's associated to an AccessEntry"
-  type = string
-  default = "cluster"
+  type        = string
+  default     = "cluster"
 
   validation {
     condition     = contains(["cluster", "namespace"], var.access_scope_type)
@@ -164,21 +164,20 @@ variable "access_scope_type" {
 
 variable "namespaces" {
   description = "The namespaces to which the access scope applies when type is namespace"
-  type = list(string)
-  default = null
+  type        = list(string)
+  default     = null
 }
 
 # EKS cluster add-ons variables
 variable "addon_name" {
   description = "Name of the EKS add-on"
-  type = set(string)
-  default = ["vpc-cni", "coredns", "kube-proxy", "aws-ebs-csi-driver", "aws-efs-csi-driver", "eks-pod-identity-agent"]
+  type        = set(string)
+  default     = ["coredns", "aws-ebs-csi-driver", "aws-efs-csi-driver", "eks-pod-identity-agent"]
 }
 
-variable "addon_version" {
-  description = "The version of the EKS add-on"
-  type = string
-  default = null
+variable "vpc_id" {
+  description = "The ID of the VPC for the security group"
+  type        = string
 }
 
 
@@ -190,45 +189,45 @@ variable "addon_version" {
 
 variable "node_group_name" {
   description = "Name of the EKS Node Group"
-  type = string
+  type        = string
 }
 
 variable "node_subnet_ids" {
   description = "Subnets IDs to associate with the EKS Node Group"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "desired_size" {
   description = "Desired number of worker nodes"
-  type = number
+  type        = number
 }
 
 variable "max_size" {
   description = "Maximum number of worker nodes"
-  type = number
+  type        = number
 }
 
 variable "min_size" {
   description = "Minimum number of worker nodes"
-  type = number
+  type        = number
 }
 
 variable "max_unavailable" {
   description = "(Optional) Desired max number of unavailable worker nodes during node group update"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
 
 variable "ami_type" {
   description = "The AMI type for your node group"
-  type = string
-  default = "AL2_x86_64"
+  type        = string
+  default     = "AL2_x86_64"
 }
 
 variable "capacity_type" {
   description = "Type of capacity associated with the EKS Node Group"
-  type = string
-  default = "ON_DEMAND"
+  type        = string
+  default     = "ON_DEMAND"
 
   validation {
     condition     = contains(["SPOT", "ON_DEMAND"], var.capacity_type)
@@ -238,33 +237,33 @@ variable "capacity_type" {
 
 variable "release_version" {
   description = "(Optional) The AMI version of the EKS Node Group"
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "force_update_version" {
   description = "(Optional) Force version update if existing pods are unable to be drained due to a pod disruption budget issue"
-  type = bool
-  default = null
+  type        = bool
+  default     = null
 }
 
 #EC2 Launch Template module variables
 variable "device_name" {
   description = "The name of the EBS device to mount (for example, /dev/sdh or xvdh)"
-  type = string
-  default = "xvdh"
+  type        = string
+  default     = "xvdh"
 }
 
 variable "volume_size" {
   description = "The size of the EBS volume in gigabytes"
-  type = number
-  default = 64
+  type        = number
+  default     = 64
 }
 
 variable "volume_type" {
   description = "The EBS volume type"
-  type = string
-  default = "gp3"
+  type        = string
+  default     = "gp3"
 
   validation {
     condition     = contains(["gp3", "gp2", "standard"], var.volume_type)
@@ -273,36 +272,98 @@ variable "volume_type" {
 }
 
 variable "kms_key_id" {
-  description = "(Optional) The ARN of the AWS KMS service customer master key (CMK) to use when creating the encrypted volume"
-  type = string
-  default = null
+  description = "The ARN of the AWS KMS service customer master key (CMK) to use when creating the encrypted volume"
+  type        = string
+  default     = null
 }
 
 variable "instance_type" {
   description = "The EC2 instance type"
-  type = string
+  type        = string
 }
 
 variable "node_security_groups" {
   description = "A list of security group IDs to associate"
-  type = list(string)
-  default = null
+  type        = list(string)
+  default     = null
 }
 
 variable "resource_type_tag" {
   description = "The type of resource to tag"
-  type = set(string)
-  default = ["instance", "volume"]
+  type        = set(string)
+  default     = ["instance", "volume"]
 }
 
 # EKS node group KMS key module variables
 variable "node_key_admin_role_arn" {
   description = "The ARN of the AWS KMS key Administrator role"
-  type = string
+  type        = string
 }
 
 variable "node_kms_key_name" {
   description = "The name of the KMS key"
-  type = string
-  default = "node-kms-key"
+  type        = string
+  default     = "node-kms-key"
+}
+
+
+#####################################################################
+
+######################################################################
+
+#EKS Custom Networking variables
+
+variable "pod_subnet_ids" {
+  description = "List of pod subnet IDs. Must be in at least two different availability zones"
+  type = map(object({
+    availability_zone = string,
+    subnet_id         = string
+  }))
+
+  default = {
+    "subnet1" = {
+      availability_zone = "us-east-1a",
+      subnet_id         = "subnet-06d2f008bbab47c17"
+    },
+
+    "subnet2" = {
+      availability_zone = "us-east-1b",
+      subnet_id         = "subnet-036c9b02b4b05a927"
+    },
+
+    "subnet3" = {
+      availability_zone = "us-east-1c",
+      subnet_id         = "subnet-0a859f596f610b591"
+    }
+  }
+}
+
+
+variable "ingress_rules" {
+  description   = "List of ingress Security Group rules to add to the EKS Secruity Group"
+  type          = map(object({
+    description = string,
+    from_port   = number,
+    to_port     = number,
+    protocol    = string,
+    cidr_blocks = string
+  }))
+
+  default = {
+    "endpoint_access" = {
+      description = "EKS endpoint access from client"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+
+    "ssh_access" = {
+      description = "EKS node SSH access from client"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  }
 }

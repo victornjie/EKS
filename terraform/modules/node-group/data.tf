@@ -70,7 +70,10 @@ data "aws_iam_policy_document" "kms_key_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", var.node_key_admin_role_arn]
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", var.node_key_admin_role_arn,
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+      ]
     }
   }
 
@@ -94,6 +97,32 @@ data "aws_iam_policy_document" "kms_key_policy" {
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", var.node_key_admin_role_arn]
+    }
+  }
+
+  statement {
+    sid       = "Allow attachment of persistent resources"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "kms:CreateGrant",
+      "kms:ListGrants",
+      "kms:RevokeGrant",
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "kms:GrantIsForAWSResource"
+      values   = ["true"]
+    }
+
+    principals {
+      type        = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", var.node_key_admin_role_arn,
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+      ]
     }
   }
 }

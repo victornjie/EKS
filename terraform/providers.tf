@@ -6,10 +6,22 @@
 ######################################################################
 
 terraform {
+  required_version = ">= 0.13"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = ">= 4.52.0"
+    }
+
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.0"
     }
   }
 }
@@ -20,14 +32,16 @@ provider "aws" {
   profile = "prod1"
 }
 
-provider "aws" {
-  region  = "us-east-2"
-  profile = "network-hub"
-  alias   = "hub-us-east-2"
+provider "kubectl" {
+  host                   = module.eks_cluster.eks_cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks_cluster.eks_cluster_ca)
+  token                  = data.aws_eks_cluster_auth.eks.token
+  load_config_file       = false
+  apply_retry_count      = 10
 }
 
-provider "aws" {
-  region  = "us-east-1"
-  profile = "network-hub"
-  alias   = "hub-us-east-1"
+provider "kubernetes" {
+  host                   = module.eks_cluster.eks_cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks_cluster.eks_cluster_ca)
+  token                  = data.aws_eks_cluster_auth.eks.token
 }

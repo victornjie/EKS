@@ -45,7 +45,7 @@ variable "max_unavailable" {
 variable "ami_type" {
   description = "The AMI type for your node group"
   type = string
-  default = "AL2_x86_64"
+  default = "AL2023_x86_64_STANDARD"
 }
 
 variable "capacity_type" {
@@ -118,7 +118,7 @@ variable "instance_type" {
   type = string
 }
 
-variable "node_security_groups" {
+variable "eks_security_group_ids" {
   description = "A list of security group IDs to associate"
   type = list(string)
   default = null
