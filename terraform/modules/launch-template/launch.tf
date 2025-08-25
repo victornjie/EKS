@@ -35,7 +35,7 @@ resource "aws_launch_template" "ec2_launch_template" {
     description = "EKS connectivity network interface"
     device_index = 0
     delete_on_termination = true
-    associate_public_ip_address = false
+    associate_public_ip_address = true
     security_groups = var.security_groups
   }
 
