@@ -35,20 +35,18 @@ resource "aws_launch_template" "ec2_launch_template" {
     description = "EKS connectivity network interface"
     device_index = 0
     delete_on_termination = true
-    associate_public_ip_address = false
+    associate_public_ip_address = true
     security_groups = var.security_groups
   }
 
   dynamic "tag_specifications" {
     for_each = var.resource_type_tag
     content {
-      resource_type = each.value
+      resource_type = tag_specifications.value
       tags = var.user_defined_tags
     }
     
   }
-
-  #user_data = filebase64("${path.module}/example.sh")
 
   tags = var.user_defined_tags
 }

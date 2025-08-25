@@ -16,12 +16,7 @@ variable "node_group_name" {
   type = string
 }
 
-variable "node_role_arn" {
-  description = "The name of the EKS cluster"
-  type = string
-}
-
-variable "subnet_ids" {
+variable "node_subnet_ids" {
   description = "Subnets IDs to associate with the EKS Node Group"
   type = list(string)
 }
@@ -50,7 +45,7 @@ variable "max_unavailable" {
 variable "ami_type" {
   description = "The AMI type for your node group"
   type = string
-  default = "AL2_x86_64"
+  default = "AL2023_x86_64_STANDARD"
 }
 
 variable "capacity_type" {
@@ -123,13 +118,26 @@ variable "instance_type" {
   type = string
 }
 
-variable "security_groups" {
+variable "eks_security_group_ids" {
   description = "A list of security group IDs to associate"
   type = list(string)
+  default = null
 }
 
 variable "resource_type_tag" {
   description = "The type of resource to tag"
   type = set(string)
   default = ["instance", "volume"]
+}
+
+# KMS key module variables
+variable "node_key_admin_role_arn" {
+  description = "The ARN of the AWS KMS key Administrator role"
+  type = string
+}
+
+variable "node_kms_key_name" {
+  description = "The name of the KMS key"
+  type = string
+  default = "node-kms-key"
 }
