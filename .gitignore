@@ -1,5 +1,5 @@
 #################################################################
-# Default .gitignore content for all  EKS modules below
+# Default .gitignore content for all Terraform modules below
 #################################################################
 
 .DS_Store
